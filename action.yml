@@ -1,0 +1,34 @@
+name: 'Build .NET'
+description: 'Build .NET for Umbraco V9'
+inputs:
+  organization-name:
+    required: true
+  project-name:
+    required: true
+  build-configuration:
+    required: true
+    default: 'release'
+  csproj-path:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Setup . NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-versionL 5.0.x
+    
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration ${{ inputs.build-configuration }}
+
+    - name: Stop AppPool and Website in IIS
+      run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
+    
+    - name: Publish
+      run: dotnet publish "${{ inputs.csproj-path }}" --output "/Sites/${{ inputs.organization-name }}/${{ inputs.project-name }}/${{ github.ref_name }}" --configuration ${{ inputs.build-configuration }} /p:EnvironmentName=Production --no-restore --no-build
+
+      - name: Create AppPool and Website in IIS
+      run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project }} (${{ github.ref_name }})" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
