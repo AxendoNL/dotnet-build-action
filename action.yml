@@ -35,5 +35,5 @@ runs:
       shell: powershell
 
     - name: Create AppPool and Website in IIS
-      run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project }} (${{ github.ref_name }})" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
+      run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
       shell: powershell
