@@ -1,5 +1,5 @@
 name: 'Build .NET'
-description: 'Build .NET for Umbraco V9'
+description: 'Build .NET for Umbraco V8'
 inputs:
   organization-name:
     required: true
@@ -13,27 +13,37 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup . NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
     
-    - name: Restore dependencies
-      run: dotnet restore
-      shell: powershell
+    - name: Create Build Directory
+      run: mkdir _build
+
+    - name: Build Solution
+      run: msbuild ${{ inputs.csproj-path }} /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build"
+        
+   
+
+
+    #- name: Build app
+    #  run: msbuild ${{ inputs.csproj-path }} -t:rebuild -verbosity:diag -property:Configuration=${{ inputs.build-configuration }}
+
+    # - name: Restore dependencies
+    #   run: dotnet restore
+    #   shell: powershell
       
-    - name: Build
-      run: dotnet build --configuration ${{ inputs.build-configuration }}
-      shell: powershell
+    # - name: Build
+    #   run: dotnet build --configuration ${{ inputs.build-configuration }}
+    #   shell: powershell
 
-    - name: Stop AppPool and Website in IIS
-      run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
-      shell: powershell
+    # - name: Stop AppPool and Website in IIS
+    #   run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
+    #   shell: powershell
     
-    - name: Publish
-      run: dotnet publish "${{ inputs.csproj-path }}" --output "/Sites/${{ inputs.organization-name }}/${{ inputs.project-name }}/${{ github.ref_name }}" --configuration ${{ inputs.build-configuration }} /p:EnvironmentName=Production --no-restore --no-build
-      shell: powershell
+    # - name: Publish
+    #   run: dotnet publish "${{ inputs.csproj-path }}" --output "/Sites/${{ inputs.organization-name }}/${{ inputs.project-name }}/${{ github.ref_name }}" --configuration ${{ inputs.build-configuration }} /p:EnvironmentName=Production --no-restore --no-build
+    #   shell: powershell
 
-    - name: Create AppPool and Website in IIS
-      run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project-name }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
-      shell: powershell
+    # - name: Create AppPool and Website in IIS
+    #   run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project-name }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
+    #   shell: powershell
