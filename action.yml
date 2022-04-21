@@ -18,10 +18,11 @@ runs:
     
     - name: Create Build Directory
       run: mkdir _build
+      shell: powershell
 
     - name: Build Solution
       run: msbuild ${{ inputs.csproj-path }} /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build"
-        
+      shell: powershell
    
 
 
