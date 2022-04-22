@@ -25,7 +25,7 @@ runs:
 
     - name: Restore nuget packages
       run: nuget restore Axendo.Umb.DataExpert.Platform.sln
-      shelL: powershell
+      shell: powershell
 
     - name: Build Solution
       run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build"
