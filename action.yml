@@ -18,17 +18,21 @@ runs:
 
     - name : Setup Nuget
       uses: nuget/setup-nuget@v1.0.6
-    
-    # - name: Create Build Directory
-    #   run: New-Item -Path .\_build -ItemType Directory -Force
-    #   shell: powershell
 
     - name: Restore nuget packages
       run: nuget restore Axendo.Umb.DataExpert.Platform.sln
       shell: powershell
 
+    - name: Stop AppPool and Website in IIS
+      run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
+      shell: powershell
+
     - name: Build Solution
-      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir="..\_build" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
+      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir="/Sites/${{ inputs.organization-name }}/${{ inputs.project-name }}/${{ github.ref_name }}" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
+      shell: powershell
+
+    - name: Create AppPool and Website in IIS
+      run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project-name }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
       shell: powershell
 
     #- name: Build app
