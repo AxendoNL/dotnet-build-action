@@ -19,32 +19,20 @@ runs:
     - name : Setup Nuget
       uses: nuget/setup-nuget@v1.0.6
     
-    - name: Create Build Directory
-      run: New-Item -Path .\_build -ItemType Directory -Force
-      shell: powershell
-
-    # - name : Add Axendo Nuget Source
-    #   run: nuget sources Add -Name "Axendo" -source "https://nuget.axendo.nl/nuget"
+    # - name: Create Build Directory
+    #   run: New-Item -Path .\_build -ItemType Directory -Force
     #   shell: powershell
 
     - name: Restore nuget packages
       run: nuget restore Axendo.Umb.DataExpert.Platform.sln
       shell: powershell
 
-    # - name: Restore nuget packages
-    #   run:  msbuild Axendo.Umb.DataExpert.Platform.sln /t:restore /p:RestoreAdditionalProjectSources="https://nuget.axendo.nl/"
-    #   shell: powershell
-
     - name: Build Solution
-      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
+      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="..\_build" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
       shell: powershell
 
     #- name: Build app
     #  run: msbuild ${{ inputs.csproj-path }} -t:rebuild -verbosity:diag -property:Configuration=${{ inputs.build-configuration }}
-
-    # - name: Restore dependencies
-    #   run: dotnet restore
-    #   shell: powershell
       
     # - name: Build
     #   run: dotnet build --configuration ${{ inputs.build-configuration }}
