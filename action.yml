@@ -17,7 +17,7 @@ runs:
       uses: microsoft/setup-msbuild@v1.1
     
     - name: Create Build Directory
-      run: mkdir _build
+      run: New-Item -Path .\_build -ItemType Directory -Force
       shell: powershell
 
     # - name : Setup nuget
@@ -27,7 +27,7 @@ runs:
     #   run: nuget restore Axendo.Umb.DataExpert.Platform.sln
     #   shell: powershell
 
-    - name: Resote nuget packages
+    - name: Restore nuget packages
       run:  msbuild Axendo.Umb.DataExpert.Platform.sln /t:restore /p:RestoreAdditionalProjectSources="https://nuget.axendo.nl/"
       shell: powershell
 
