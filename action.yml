@@ -23,9 +23,9 @@ runs:
       run: New-Item -Path .\_build -ItemType Directory -Force
       shell: powershell
 
-    - name : Add Axendo Nuget Source
-      run: nuget sources Add -Name "Axendo" -source "https://nuget.axendo.nl/nuget"
-      shell: powershell
+    # - name : Add Axendo Nuget Source
+    #   run: nuget sources Add -Name "Axendo" -source "https://nuget.axendo.nl/nuget"
+    #   shell: powershell
 
     - name: Restore nuget packages
       run: nuget restore Axendo.Umb.DataExpert.Platform.sln
