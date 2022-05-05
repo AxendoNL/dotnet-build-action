@@ -20,15 +20,19 @@ runs:
       run: mkdir _build
       shell: powershell
 
-    - name : Setup nuget
-      uses: nuget/setup-nuget@v1.0.6
+    # - name : Setup nuget
+    #   uses: nuget/setup-nuget@v1.0.6
 
     # - name: Restore nuget packages
     #   run: nuget restore Axendo.Umb.DataExpert.Platform.sln
     #   shell: powershell
 
+    - name: Resote nuget packages
+      run:  msbuild Axendo.Umb.DataExpert.Platform.sln /t:restore /p:RestoreAdditionalProjectSources="https://nuget.axendo.nl/"
+      shell: powershell
+
     - name: Build Solution
-      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build" /p:RestoreAdditionalProjectSources="https://nuget.axendo.nl/"
+      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="_build"
       shell: powershell
    
     #- name: Build app
