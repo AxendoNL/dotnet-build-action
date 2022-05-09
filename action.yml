@@ -27,9 +27,19 @@ runs:
       run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
       shell: powershell
 
+    #config transform
+    - name: Transform web.config
+      run: c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.test.config pw
+      shell: powershell
+      working-directory: Axendo.Umb.DataExpert.Platform.web
+
     - name: Build Solution
       run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
       shell: powershell
+
+    # copy files to sites folder
+    # create robots.txt (disallow all)
+    # CreateAppPool CLR V
 
     - name: Create AppPool and Website in IIS
       run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project-name }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}"
@@ -37,7 +47,6 @@ runs:
 
 
 #      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:OutDir="/Sites/${{ inputs.organization-name }}/${{ inputs.project-name }}/${{ github.ref_name }}" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
-
 
 # -source:contentPath="${bamboo.build.working.directory}\" 
 # -dest:contentPath="${bamboo.DeployServerRoot}${bamboo.CustomerName}\${bamboo.ProjectName}\${bamboo.planRepository.branchName}\" 
@@ -50,3 +59,7 @@ runs:
 # -skip:skipAction=Delete,objectName=filePath,absolutePath="\\App_Plugins\\UmbracoForms\\Data\\forms\\*.*" 
 # -skip:skipAction=Delete,objectName=filePath,absolutePath="\\App_Plugins\\UmbracoForms\\Data\\Templates\\*.*" 
 # -skip:skipAction=Delete,objectName=filePath,absolutePath="\\App_Plugins\\UmbracoForms\\Data\\Workflows\\*.*"
+
+# s:"${bamboo.Solution}.Web\Web.config" 
+# t:"${bamboo.Solution}.Web\Web.${bamboo.BuildConfiguration}.config" 
+# d:"${bamboo.Solution}.Web\Web.config" pw
