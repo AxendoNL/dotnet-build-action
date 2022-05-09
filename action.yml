@@ -28,7 +28,9 @@ runs:
       shell: powershell
 
     - name: Transform web.config
-      run: c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:.\*.web\web.config t:.\*.web\web.bamboo.config d:.\*.web\web.config pw
+      run: |
+        cd .\*.web\
+        c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw
       shell: powershell
 
     - name: Build Solution
