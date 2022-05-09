@@ -34,7 +34,7 @@ runs:
       shell: powershell
 
     - name: Build Solution
-      run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
+      run: msbuild ${{ inputs.csproj-path }} /nologo /nr:false /p:DeployOnBuild=true /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
       shell: powershell
     
     - name: Create robots.txt (disallow all)
@@ -45,8 +45,8 @@ runs:
 
     - name: Copy files to sites folder
       run: |
-        md -Force C:\Sites\DataExpert\Platform\master
-        Copy-Item .\*.Web\* C:\Sites\DataExpert\Platform\master -force -recurse
+        md -Force C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}
+        Copy-Item .\*.Web\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse
       shell: powershell
     
     - name: Create AppPool and Website in IIS
