@@ -45,8 +45,8 @@ runs:
 
     - name: Copy files to sites folder
       run: |
-        mkdir C:\Sites\DataExpert\Platform\master
-        Copy-Item .\*.Web\* C:\Sites\DataExpert\Platform\master -force -recurse -verbose
+        md -Force C:\Sites\DataExpert\Platform\master
+        Copy-Item .\*.Web\* C:\Sites\DataExpert\Platform\master -force -recurse
       shell: powershell
     
     - name: Create AppPool and Website in IIS
