@@ -37,15 +37,18 @@ runs:
       run: msbuild Axendo.Umb.DataExpert.Platform.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:AutoParameterizationWebConfigConnectionStrings=false /p:MvcBuildViews=false
       shell: powershell
     
-    # copy files to sites folder
+    - name: Create robots.txt (disallow all)
+      run: |
+        New-Item robots.txt
+        Set-Content robots.txt "User-agent: *`r`Disallow: /"
+      shell: powershell
+
     - name: Copy files to sites folder
       run: |
         mkdir C:\Sites\DataExpert\Platform\master
         Copy-Item .\*.Web\* C:\Sites\DataExpert\Platform\master -force -recurse -verbose
       shell: powershell
     
-    # create robots.txt (disallow all)
-
     - name: Create AppPool and Website in IIS
       run: C:\.\DeploymentScripts\CreateIISAppPoolAndWebsite.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})" "${{ github.ref_name }}.${{ inputs.project-name }}.${{ inputs.organization-name }}" "C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}" "v4.0"
       shell: powershell
