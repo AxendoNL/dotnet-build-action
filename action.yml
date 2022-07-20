@@ -1,5 +1,5 @@
 name: 'Build .NET'
-description: 'Build .NET for Umbraco V9'
+description: 'Build .NET for Umbraco V10'
 inputs:
   organization-name:
     required: true
@@ -14,9 +14,9 @@ runs:
   using: "composite"
   steps:
     - name: Setup . NET
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     
     - name: Restore dependencies
       run: dotnet restore
