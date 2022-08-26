@@ -29,7 +29,8 @@ runs:
 
     - name: Transform web.config
       run: |
-        cd .\*.web\
+        $webFolderExists = Test-Path .\*.web\
+        if($webFolderExists){ cd .\*.web\ } else { cd .\*.site\ }
         c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw
       shell: powershell
 
