@@ -31,7 +31,8 @@ runs:
       run: |
         $webFolderExists = Test-Path .\*.web\
         if($webFolderExists){ cd .\*.web\ } else { cd .\*.site\ }
-        c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw
+        $webBambooConfigExists = Test-Path web.bamboo.config
+        if($webBambooConfigExists) {c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw}
       shell: powershell
 
     - name: Build Solution
@@ -47,7 +48,9 @@ runs:
     - name: Copy files to sites folder
       run: |
         md -Force C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}
-        Copy-Item .\*.Web\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse
+         $webFolderExists = Test-Path .\*.web\
+         if($webFolderExists){Copy-Item .\*.Web\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse}
+         if(-not $webFolderExists){Copy-Item .\*.Site\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse}
       shell: powershell
     
     - name: Create AppPool and Website in IIS
