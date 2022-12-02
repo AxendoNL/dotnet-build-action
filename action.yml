@@ -20,9 +20,6 @@ runs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-        source-url: https://nuget.pkg.github.com/Axendo/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{inputs.token}}
     
     - name: Add Github Package source
       run: |
