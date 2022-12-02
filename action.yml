@@ -23,7 +23,7 @@ runs:
     
     - name: Add Github Package source
       run: |
-        dotnet nuget list source
+        dotnet nuget remove source Source
         dotnet nuget add source --username Axendo --password ${{ inputs.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Axendo/index.json"
         dotnet nuget list source
       shell: powershell
