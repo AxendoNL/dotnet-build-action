@@ -21,8 +21,11 @@ runs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Add GitHub PAT to nuget.config
-      run: (Get-Content -path .\NuGet.config -Raw) -replace '{PAT}','${{ inputs.token }}' | Set-Content -Path .\NuGet.config
+    - name: Add GitHub to Nuget source
+      run: |
+        dotnet nuget list source
+        dotnet nuget add source -Name "github - via actions" -ConfigFile .\NuGet.config
+        dotnet nuget list source
       shell: powershell
 
     - name: Restore dependencies
