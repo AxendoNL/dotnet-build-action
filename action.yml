@@ -33,6 +33,14 @@ runs:
       run: dotnet build --configuration ${{ inputs.build-configuration }}
       shell: powershell
 
+     #substitute production appsettings entries to appsettings json file
+    - name: App Settings Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: './**/appsettings.json'
+      env:
+        Umbraco.CMS.RuntimeMinification.version: ${{github.run_number}}
+
     - name: Stop AppPool and Website in IIS
       run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
       shell: powershell
