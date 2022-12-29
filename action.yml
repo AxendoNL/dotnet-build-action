@@ -26,8 +26,6 @@ runs:
       shell: powershell
 
     - name: Restore dependencies
-      env: #this sets the environment variable 'GITHUB_PACKAGES_PAT' used inside the NuGet.config file.
-        GITHUB_PACKAGES_PAT: ${{ inputs.token }}
       run: dotnet restore
       shell: powershell
       
