@@ -37,9 +37,9 @@ runs:
     - name: App Settings Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
-        files: './**/appsettings.json'
+        files: '${{ env.BUILD_NET_VARIABLE_SUBSTITUTION_FILES }}'
       env:
-        Umbraco.CMS.RuntimeMinification.version: ${{github.run_number}}
+        ${{ env.BUILD_NET_VARIABLE_SUBSTITUTION_ENV }}
 
     - name: Stop AppPool and Website in IIS
       run: c:\.\DeploymentScripts\StopIISAppPool.ps1 "${{ inputs.organization-name }} ${{ inputs.project-name }} (${{ github.ref_name }})"
