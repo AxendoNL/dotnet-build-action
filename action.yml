@@ -1,5 +1,5 @@
 name: 'Build .NET'
-description: 'Build .NET for Umbraco V10'
+description: 'Build .NET for Umbraco V12'
 inputs:
   organization-name:
     required: true
