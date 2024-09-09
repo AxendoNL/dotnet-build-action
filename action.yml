@@ -13,6 +13,10 @@ inputs:
   token:
     description: 'A Github PAT'
     required: true
+  site-folder-ending:
+    description: 'The folder suffix to copy files from (e.g., .web or .site)'
+    required: true
+    default: '.web'
 runs:
   using: "composite"
   steps:
@@ -20,7 +24,12 @@ runs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Add GitHub PAT to nuget.config
-      run: (Get-Content -path .\NuGet.config -Raw) -replace '{PAT}','${{ inputs.token }}' | Set-Content -Path .\NuGet.config
+      run: |
+        if (Test-Path .\NuGet.config) {
+          (Get-Content -path .\NuGet.config -Raw) -replace '{PAT}','${{ inputs.token }}' | Set-Content -Path .\NuGet.config
+        } else {
+          Write-Host "NuGet.config not found. Skipping step."
+        }
       shell: powershell
 
     - name : Setup Nuget
@@ -36,10 +45,15 @@ runs:
 
     - name: Transform web.config
       run: |
-        $webFolderExists = Test-Path .\*.web\
-        if($webFolderExists){ cd .\*.web\ } else { cd .\*.site\ }
+        $folderEnding = '${{ inputs.site-folder-ending }}'
+        $folderExists = Test-Path ".\*$folderEnding\"
+        if ($folderExists) {
+          cd ".\*$folderEnding\"
+        }
         $webBambooConfigExists = Test-Path web.bamboo.config
-        if($webBambooConfigExists) {c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw}
+        if ($webBambooConfigExists) {
+          c:\.\DeploymentScripts\ConfigTransformationTool\ctt.exe s:web.config t:web.bamboo.config d:web.config pw
+        }
       shell: powershell
 
     - name: Build Solution
@@ -55,9 +69,13 @@ runs:
     - name: Copy files to sites folder
       run: |
         md -Force C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }}
-         $webFolderExists = Test-Path .\*.web\
-         if($webFolderExists){Copy-Item .\*.Web\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse}
-         if(-not $webFolderExists){Copy-Item .\*.Site\* C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse}
+        $folderEnding = '${{ inputs.site-folder-ending }}'
+        $folderExists = Test-Path ".\*$folderEnding\"
+        if ($folderExists) {
+          Copy-Item ".\*$folderEnding\*" C:\Sites\${{ inputs.organization-name }}\${{ inputs.project-name }}\${{ github.ref_name }} -force -recurse
+        } else {
+          Write-Host "No folder found with the specified ending: $folderEnding. Skipping copy."
+        }
       shell: powershell
     
     - name: Create AppPool and Website in IIS
