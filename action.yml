@@ -16,6 +16,10 @@ inputs:
   dotnet-version:
     required: true
     default: '10.x'
+  node-version:
+    description: 'version of node.js used when dotnet build runs the frontend esproj, is set at organization or repository level with FRONTEND_NODE_VERSION variable'
+    required: false
+    default: '20'
 runs:
   using: "composite"
   steps:
@@ -23,6 +27,11 @@ runs:
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '${{ inputs.dotnet-version }}'
+
+    - name: Setup node
+      uses: actions/setup-node@v6
+      with:
+        node-version: '${{ inputs.node-version || ''20'' }}'
 
     - name: Add GitHub PAT to nuget.config
       run: (Get-Content -path .\NuGet.config -Raw) -replace '{PAT}','${{ inputs.token }}' | Set-Content -Path .\NuGet.config
